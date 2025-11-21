@@ -1,5 +1,8 @@
-# Lista que representa la pila de trajes
-pila_trajes = [
+from stack import Stack
+
+pila_trajes = Stack()
+
+trajes = [
     {"modelo": "Mark III", "pelicula": "Iron Man", "estado": "Impecable"},
     {"modelo": "Mark XLIV", "pelicula": "Avengers: Age of Ultron", "estado": "Dañado"},
     {"modelo": "Mark XLVII", "pelicula": "Spider-Man: Homecoming", "estado": "Dañado"},
@@ -8,68 +11,122 @@ pila_trajes = [
     {"modelo": "Mark XLVI", "pelicula": "Capitan America: Civil War", "estado": "Dañado"},
 ]
 
-# a. Buscar si el modelo Mark XLIV fue usado y en qué películas
+for t in trajes:
+    pila_trajes.push(t)
+
+
+
 def buscar_modelo(pila, modelo_buscar):
+    aux = Stack()
     peliculas = []
-    for traje in pila:
+
+    while pila.size() > 0:
+        traje = pila.pop()
         if traje["modelo"] == modelo_buscar:
             peliculas.append(traje["pelicula"])
+        aux.push(traje)
+
+ 
+    while aux.size() > 0:
+        pila.push(aux.pop())
+
     if peliculas:
         print(f"\nEl modelo {modelo_buscar} fue usado en:")
-        for peli in peliculas:
-            print(f" - {peli}")
+        for p in peliculas:
+            print(f" - {p}")
     else:
         print(f"\nEl modelo {modelo_buscar} no fue encontrado.")
 
-# b. Mostrar modelos dañados sin perder la pila
+
+
 def mostrar_dañados(pila):
+    aux = Stack()
     print("\nModelos dañados:")
-    for traje in pila:
+
+    while pila.size() > 0:
+        traje = pila.pop()
         if traje["estado"] == "Dañado":
             print(f" - {traje['modelo']} en {traje['pelicula']}")
+        aux.push(traje)
 
-# c. Eliminar modelos destruidos mostrando sus nombres
+    while aux.size() > 0:
+        pila.push(aux.pop())
+
+
+
 def eliminar_destruidos(pila):
-    nueva_pila = []
+    aux = Stack()
+    nueva = Stack()
+
     print("\nModelos eliminados (estado: Destruido):")
-    for traje in pila:
+
+    while pila.size() > 0:
+        traje = pila.pop()
+        aux.push(traje)
+
+    while aux.size() > 0:
+        traje = aux.pop()
         if traje["estado"] == "Destruido":
             print(f" - {traje['modelo']} en {traje['pelicula']}")
         else:
-            nueva_pila.append(traje)
-    return nueva_pila
+            nueva.push(traje)
 
-# e. Agregar el modelo Mark LXXXV si no está repetido en la misma película
+    return nueva
+
+
+
 def agregar_modelo(pila, nuevo_traje):
-    for traje in pila:
+    aux = Stack()
+    existe = False
+
+    while pila.size() > 0:
+        traje = pila.pop()
         if traje["modelo"] == nuevo_traje["modelo"] and traje["pelicula"] == nuevo_traje["pelicula"]:
-            print("\nEl modelo ya fue cargado en esa película.")
-            return pila
-    pila.append(nuevo_traje)
+            existe = True
+        aux.push(traje)
+
+    while aux.size() > 0:
+        pila.push(aux.pop())
+
+    if existe:
+        print("\nEl modelo ya fue cargado en esa película.")
+        return pila
+
+    pila.push(nuevo_traje)
     print("\nModelo agregado correctamente.")
     return pila
 
-# f. Mostrar trajes usados en películas específicas
+
+
 def trajes_en_peliculas(pila, peliculas_objetivo):
+    aux = Stack()
+
     print("\nTrajes usados en las películas seleccionadas:")
-    for traje in pila:
+
+    while pila.size() > 0:
+        traje = pila.pop()
         if traje["pelicula"] in peliculas_objetivo:
             print(f" - {traje['modelo']} en {traje['pelicula']}")
+        aux.push(traje)
 
-buscar_modelo(pila_trajes, "Mark XLIV")  # Punto a
+    while aux.size() > 0:
+        pila.push(aux.pop())
 
-mostrar_dañados(pila_trajes)             # Punto b
 
-pila_trajes = eliminar_destruidos(pila_trajes)  # Punto c
+buscar_modelo(pila_trajes, "Mark XLIV")
+
+mostrar_dañados(pila_trajes)
+
+pila_trajes = eliminar_destruidos(pila_trajes)
 
 nuevo_traje = {
     "modelo": "Mark LXXXV",
-    "pelicula": "Iron Man 4",  # Distinta película
+    "pelicula": "Iron Man 4",
     "estado": "Impecable"
 }
-pila_trajes = agregar_modelo(pila_trajes, nuevo_traje)  # Punto e
+pila_trajes = agregar_modelo(pila_trajes, nuevo_traje)
 
 trajes_en_peliculas(
     pila_trajes,
     ["Spider-Man: Homecoming", "Capitan America: Civil War"]
-)  # Punto f
+)

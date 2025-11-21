@@ -1,5 +1,9 @@
-# Pila de personajes (la cima es el final de la lista)
-pila_personajes = [
+from stack import Stack
+
+pila_personajes = Stack()
+
+# CARGAR LOS PERSONAJES EN LA PILA
+datos = [
     {"nombre": "Iron Man", "peliculas": 10},
     {"nombre": "Captain America", "peliculas": 9},
     {"nombre": "Thor", "peliculas": 8},
@@ -12,44 +16,71 @@ pila_personajes = [
     {"nombre": "Captain Marvel", "peliculas": 3}
 ]
 
-# a. Determinar la posición de Rocket Raccoon y Groot (desde la cima)
+
+for d in datos:
+    pila_personajes.push(d)
+
 def encontrar_posiciones(pila, nombres_buscar):
+    aux = Stack()
+    posiciones = {}
+    pos_actual = 1
+
+    # pasar todo a aux y registrar posiciones
+    while not pila.is_empty():
+        personaje = pila.pop()
+        nombre = personaje["nombre"]
+        if nombre in nombres_buscar:
+            posiciones[nombre] = pos_actual
+        aux.push(personaje)
+        pos_actual += 1
+
+    # restaurar pila
+    while not aux.is_empty():
+        pila.push(aux.pop())
+
     print("\nPosiciones desde la cima:")
     for nombre in nombres_buscar:
-        for i in range(len(pila)-1, -1, -1):  # Desde el final hacia el inicio
-            if pila[i]["nombre"] == nombre:
-                posicion = len(pila) - i
-                print(f" - {nombre} está en la posición {posicion}")
-                break
+        if nombre in posiciones:
+            print(f" - {nombre} está en la posición {posiciones[nombre]}")
         else:
-            print(f" - {nombre} no se encuentra en la pila")
-
-# b. Mostrar personajes con más de 5 películas
+            print(f" - {nombre} no está en la pila")
 def personajes_mas_de_5(pila):
+    aux = Stack()
     print("\nPersonajes con más de 5 películas:")
-    for personaje in pila:
+
+    while not pila.is_empty():
+        personaje = pila.pop()
         if personaje["peliculas"] > 5:
             print(f" - {personaje['nombre']} ({personaje['peliculas']} películas)")
+        aux.push(personaje)
 
-# c. Cantidad de películas de Black Widow
-def cantidad_peliculas_personaje(pila, nombre_personaje):
-    for personaje in pila:
-        if personaje["nombre"].lower() == nombre_personaje.lower():
+    while not aux.is_empty():
+        pila.push(aux.pop())     
+def cantidad_peliculas_personaje(pila, nombre_buscar):
+    aux = Stack()
+    encontrado = False
+
+    while not pila.is_empty():
+        personaje = pila.pop()
+        if personaje["nombre"].lower() == nombre_buscar.lower():
             print(f"\n{personaje['nombre']} participó en {personaje['peliculas']} películas.")
-            return
-    print(f"\n{name_personaje} no se encuentra en la pila.")
+            encontrado = True
+        aux.push(personaje)
 
-# d. Mostrar personajes cuyos nombres empiezan con C, D o G
+    while not aux.is_empty():
+        pila.push(aux.pop())
+
+    if not encontrado:
+        print(f"\n{nombre_buscar} no se encuentra en la pila.")
 def nombres_con_letras(pila, letras):
+    aux = Stack()
     print("\nPersonajes cuyos nombres comienzan con C, D o G:")
-    for personaje in pila:
+
+    while not pila.is_empty():
+        personaje = pila.pop()
         if personaje["nombre"][0].upper() in letras:
             print(f" - {personaje['nombre']}")
+        aux.push(personaje)
 
-# -----------------------------
-# 🔽 Ejecución de los puntos
-# -----------------------------
-encontrar_posiciones(pila_personajes, ["Rocket Raccoon", "Groot"])         # Punto a
-personajes_mas_de_5(pila_personajes)                                       # Punto b
-cantidad_peliculas_personaje(pila_personajes, "Black Widow")              # Punto c
-nombres_con_letras(pila_personajes, {"C", "D", "G"})                       # Punto d
+    while not aux.is_empty():
+        pila.push(aux.pop())
